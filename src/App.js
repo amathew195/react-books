@@ -11,14 +11,27 @@ function App() {
 
   function createBook(title) {
     setBooks([...books, {
-      title: title,
+      title,
       id: uuid()
     }]);
   }
 
+  function updateBook(id, newTitle) {
+    const updatedBooks = books.map(book => {
+      if (book.id === id) return { ...book, title: newTitle };
+      return book;
+    });
+    setBooks(updatedBooks);
+  }
+
+  function deleteBook(id) {
+    const updatedBooks = books.filter(book => book.id !== id);
+    setBooks(updatedBooks);
+  }
+
   return (
     <div className="App">
-      <BookList books={books} />
+      <BookList books={books} onEdit={updateBook} onDelete={deleteBook} />
       <BookCreate onSubmit={createBook} />
     </div>
   );
