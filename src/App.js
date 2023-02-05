@@ -1,19 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BookCreate from "./components/BookCreate";
 import BookList from "./components/BookList";
-import uuid from 'react-uuid';
+import axios from 'axios';
 
+const API_URL = "http://localhost:3001/books";
 
 function App() {
   const [books, setBooks] = useState([]);
 
   console.log(books, "books");
 
-  function createBook(title) {
-    setBooks([...books, {
-      title,
-      id: uuid()
-    }]);
+  useEffect(() => {
+    async function fetchBooks() {
+      const response = await axios.get(API_URL);
+      setBooks(response.data);
+    }
+  }, []);
+
+
+  async function createBook(title) {
+    const response = await axios.post(API_URL, { title });
+    setBooks(currBooks => [...currBooks, response.data]);
   }
 
   function updateBook(id, newTitle) {
@@ -31,6 +38,7 @@ function App() {
 
   return (
     <div className="App">
+      <h1>Reading List</h1>
       <BookList books={books} onEdit={updateBook} onDelete={deleteBook} />
       <BookCreate onSubmit={createBook} />
     </div>
